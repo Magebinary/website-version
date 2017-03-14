@@ -34,9 +34,22 @@ class QWeb(models.AbstractModel):
             if 'version_id' in context:
                 version_id = context.get('version_id')
                 if version_id:
-                    id_or_xml_id = self.pool["ir.ui.view"].search(cr, uid, [('key', '=', id_or_xml_id), '|', ('version_id', '=', False), ('version_id', '=', version_id), '|', ('website_id', '=', website_id), ('website_id', '=', False)], order='website_id, version_id', limit=1, context=context)[0]
+                    print "id_or_xml_id={}".format(id_or_xml_id)
+                    print "version_id={}".format(version_id)
+                    print "website_id={}".format(website_id)
+                    print "context={}".format(context)
+                    # pool = self.pool["ir.ui.view"].search(cr, uid, [('key', '=', id_or_xml_id), '|', ('version_id', '=', False), ('version_id', '=', version_id), '|', ('website_id', '=', website_id), ('website_id', '=', False)], order='website_id, version_id', limit=1, context=context)
+                    pool = self.pool["ir.ui.view"].search(cr, uid, [('key', '=', id_or_xml_id), '|', ('version_id', '=', False), ('version_id', '=', version_id), '|', ('website_id', '=', website_id), ('website_id', '=', False)], order='website_id, version_id', limit=1, context=context)
+                    print "pool={}".format(pool)
+                    if len(pool) > 0:
+                        view_id = pool[0]
+                        print "view_id={}".format(view_id)
                 else:
                     id_or_xml_id = self.pool["ir.ui.view"].search(cr, uid, [('key', '=', id_or_xml_id), ('version_id', '=', False), '|', ('website_id', '=', website_id), ('website_id', '=', False)], order='website_id', limit=1, context=context)[0]
             else:
                 id_or_xml_id = self.pool["ir.ui.view"].search(cr, uid, [('key', '=', id_or_xml_id), '|', ('website_id', '=', website_id), ('website_id', '=', False), ('version_id', '=', False)], order='website_id', limit=1, context=context)[0]
+            print "id_or_xml_id after={}".format(id_or_xml_id)
+            print "version_id after={}".format(version_id)
+            print "website_id after={}".format(website_id)
+            print "context after={}".format(context)
         return super(QWeb, self).render(cr, uid, id_or_xml_id, qwebcontext, loader=loader, context=context)
