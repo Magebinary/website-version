@@ -14,6 +14,7 @@ class Versioning_Controller(Website):
 
     @http.route('/website_version/change_version', type='json', auth="user", website=True)
     def change_version(self, version_id):
+        # print "version_id={}".format(version_id)
         request.session['version_id'] = version_id
         return version_id
 
@@ -46,11 +47,21 @@ class Versioning_Controller(Website):
     @http.route('/website_version/all_versions', type='json', auth="public", website=True)
     def all_versions(self, view_id):
         #To get all versions in the menu
+        # print "view_id={}".format(view_id)
         view = request.env['ir.ui.view'].browse(view_id)
+        # print "view={}".format(view)
+        # print "view.key={}".format(view.key)
         Version = request.env['website_version.version']
+        # print "Version={}".format(Version)
         website_id = request.website.id
-        versions = Version.search([('website_id', '=', website_id), '|', ('view_ids.key', '=', view.key), ('view_ids.key', '=', 'website.footer_default')])
+        # print "website_id={}".format(website_id)
+        # versions = Version.search([('website_id', '=', website_id), ('view_ids.key', '=', view.key)])
+        versions = Version.search([('website_id', '=', website_id)])
+        # print "versions={}".format(versions)
+        context = request.context
+        # print "context={}".format(context)
         current_version_id = request.context.get('version_id')
+        # print "current_version_id={}".format(current_version_id)
         check = False
         result = []
         for ver in versions:
@@ -74,6 +85,9 @@ class Versioning_Controller(Website):
     @http.route('/website_version/publish_version', type='json', auth="user", website=True)
     def publish_version(self, version_id, save_master, copy_master_name):
         request.session['version_id'] = 0
+
+        print "publish start"
+        print "request={}".format(request.env['website_version.version'].browse(version_id))
         return request.env['website_version.version'].browse(version_id).publish_version(save_master, copy_master_name)
 
     @http.route('/website_version/diff_version', type='json', auth="user", website=True)
@@ -145,3 +159,22 @@ class Versioning_Controller(Website):
             exp_obj = request.env['website_version.experiment']
             exp_obj.create(vals)
         return existing_experiment
+
+
+    # @http.route('/website/add/<path:path>', type='http', auth="user", website=True)
+    # def pagenew(self, path, noredirect=False, add_menu=None):
+    #     xml_id = request.registry['website'].new_page(request.cr, request.uid, path, context=request.context)
+    #     if add_menu:
+    #         request.registry['website.menu'].create(
+    #             request.cr, request.uid, {
+    #                 'name': path,
+    #                 'url': "/page/" + xml_id[8:],
+    #                 'parent_id': request.website.menu_id.id,
+    #                 'website_id': 0,
+    #             }, context=request.context)
+    #     # Reverse action in order to allow shortcut for /page/<website_xml_id>
+    #     url = "/page/" + re.sub(r"^website\.", '', xml_id)
+
+    #     if noredirect:
+    #         return werkzeug.wrappers.Response(url, mimetype='text/plain')
+    #     return werkzeug.utils.redirect(url + "?enable_editor=1")

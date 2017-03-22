@@ -8,8 +8,12 @@ class view(models.Model):
     _inherit    = "ir.ui.view"
     website_id  = fields.Many2one('website', ondelete='cascade', string="Website")
     version_id  = fields.Many2one('website_version.version', ondelete='cascade', string="Version")
-
     key = fields.Char(string='Key')
+
+    _defaults = {
+        'website_id': 1,
+    }
+
 
     def filter_duplicate(self):
         """
@@ -44,8 +48,8 @@ class view(models.Model):
     def write(self, vals):
         if self.env.context is None:
             self.env.context = {}
-
         version_id = self.env.context.get('version_id')
+        print "write"
         #If you write on a shared view, your modifications will be seen on every website wich uses these view.
         #To dedicate a view for a specific website, you must create a version and publish these version.
         if version_id and not self.env.context.get('write_on_view') and not 'active' in vals:
@@ -54,6 +58,7 @@ class view(models.Model):
             website_id = version.website_id.id
             version_view_ids = self.env['ir.ui.view']
             for current in self:
+                print "version_id={}".format(version_id)
                 #check if current is in version
                 if current.version_id.id == version_id:
                     version_view_ids += current
@@ -82,15 +87,20 @@ class view(models.Model):
     def action_publish(self):
         self.publish()
 
-    @api.model
-    def get_view_id(self, xml_id):
+    @tools.ormcache_context(accepted_keys=('website_id',))
+    def get_view_id(self, cr, uid, xml_id, context=None):
         if self.env.context and 'website_id' in self.env.context and not isinstance(xml_id, (int, long)):
             domain = [('key', '=', xml_id), '|', ('website_id', '=', self.env.context['website_id']), ('website_id', '=', False)]
             if 'version_id' in self.env.context:
                 domain += ['|', ('version_id', '=', self.env.context['version_id']), ('version_id', '=', False)]
             xml_id = self.search(domain, order='website_id,version_id', limit=1).id
+        elif context and 'website_id' in context and not isinstance(xml_id, (int, long)):
+            domain = [('key', '=', xml_id), '|', ('website_id', '=', context['website_id']), ('website_id', '=', False)]
+            [view_id] = self.search(cr, uid, domain, order='website_id', limit=1, context=context) or [None]
+            if not view_id:
+                raise ValueError('View %r in website %r not found' % (xml_id, context['website_id']))
         else:
-            xml_id = super(view, self).get_view_id(xml_id)
+            xml_id = self.pool['ir.model.data'].xmlid_to_res_id(cr, uid, xml_id, raise_if_not_found=True)
         return xml_id
 
     @tools.ormcache_context(**dict(accepted_keys=('lang', 'inherit_branding', 'editable', 'translatable', 'website_id', 'version_id')))
@@ -107,18 +117,18 @@ class view(models.Model):
         arch = etree.tostring(root, encoding='utf-8', xml_declaration=True)
         return arch
 
-    #To take the right inheriting views
-    @api.model
-    def get_inheriting_views_arch(self, view_id, model):
-        arch = super(view, self).get_inheriting_views_arch(view_id, model)
-        vw = self.browse(view_id)
-        if not (self.env.context and self.env.context.get('website_id') and vw.type == 'qweb'):
-            return arch
+    # #To take the right inheriting views
+    # @api.model
+    # def get_inheriting_views_arch(self, view_id, model):
+    #     arch = super(view, self).get_inheriting_views_arch(view_id, model)
+    #     vw = self.browse(view_id)
+    #     if not (self.env.context and self.env.context.get('website_id') and vw.type == 'qweb'):
+    #         return arch
 
-        # keep the most suited view when several view with same key are available
-        chosen_view_ids = self.browse(view_id for _, view_id in arch).filter_duplicate().ids
+    #     # keep the most suited view when several view with same key are available
+    #     chosen_view_ids = self.browse(view_id for _, view_id in arch).filter_duplicate().ids
 
-        return [x for x in arch if x[1] in chosen_view_ids]
+    #     return [x for x in arch if x[1] in chosen_view_ids]
 
     #To active or desactive the right views according to the key
     def toggle(self, cr, uid, ids, context=None):
@@ -132,6 +142,13 @@ class view(models.Model):
     @api.model
     def translate_qweb(self, id_, arch, lang):
         website_view = self.browse(id_)
+        # print "website_view.xml_id={}".format(website_view.xml_id)
+        # print "website_view.key={}".format(website_view.key)
+        # print "website_view.write={}".format((website_view.type == 'qweb') and (website_view.xml_id) and (website_view.key == False))
+        # if (website_view.type == 'qweb') and (website_view.xml_id) and (website_view.key == False):
+        #     flag = self.pool.get('res.users')
+        #     website_view.write({'key': website_view.xml_id})
+        #     print "website_view.key={}".format(website_view.key)
         if not website_view.key:
             return super(view, self).translate_qweb(id_, arch, lang)
         views = self.search([('key', '=', website_view.key), '|',
@@ -178,3 +195,10 @@ class view(models.Model):
             if element['res_id'] in view_list.ids:
                 element['res_id'] = xml_id
         return element_list
+
+    def render(self, cr, uid, id_or_xml_id, values=values, engine=engine, context=context):
+        website_view = self.browse(id_)
+        if (website_view.type == 'qweb') and (website_view.xml_id) and (website_view.key == False):
+            website_view.write({'key': website_view.xml_id})
+            print "website_view.key={}".format(website_view.key)
+        return super(view, self).render(cr, uid, id_or_xml_id, values=values, engine=engine, context=context)

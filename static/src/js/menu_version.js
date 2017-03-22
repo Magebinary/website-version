@@ -22,7 +22,7 @@
             });
 
             this.$el.find('#version-menu-button').click(function() {
-                var view_id = parseInt($('html').attr('data-view-xmlid'));
+                var view_id = parseInt($('html').attr('data-main-object').match(/ir\.ui\.view\((\d+),/)[1]);
                 openerp.jsonRpc( '/website_version/all_versions', 'call', {'view_id': view_id}).then(function (result) {
                     self.$el.find(".o_version_choice").remove();
                     self.$el.find(".first_divider").before(QWeb.render("all_versions", {versions:result}));

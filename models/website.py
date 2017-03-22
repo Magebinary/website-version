@@ -26,7 +26,7 @@ class NewWebsite(models.Model):
     @api.model
     def get_current_website(self):
         website = super(NewWebsite, self).get_current_website()
-        #We just set the cookie for the first visit
+        # We just set the cookie for the first visit
         if 'website_version_experiment' in request.httprequest.cookies:
             EXP = json.loads(request.httprequest.cookies.get('website_version_experiment'))
         else:
@@ -60,24 +60,24 @@ class NewWebsite(models.Model):
             request.context['experiment_id'] = 1
         return website
 
-    @api.model
-    def google_analytics_data(self, main_object):
-        #To get the ExpId and the VarId of the view if it is in a running experiment
-        result = {}
-        if main_object and main_object._name == 'ir.ui.view':
-            view = main_object
-            #search all the running experiments with the key of view
-            exp_ids = self.env['website_version.experiment'].search([('experiment_version_ids.version_id.view_ids.key', '=', view.key), ('state', '=', 'running'), ('experiment_version_ids.version_id.website_id', '=', self.env.context.get('website_id'))])
-            if exp_ids:
-                #No overlap between running experiments then we can take the first one
-                result['expId'] = exp_ids[0].google_id
-                version_id = self.env.context.get('version_id') or self.env.context['website_version_experiment'].get(exp_ids[0].google_id)
-                if version_id:
-                    exp_ver_ids = self.env['website_version.experiment.version'].search([('experiment_id', '=', exp_ids[0].id), ('version_id', '=', int(version_id))], limit=1)
-                    if exp_ver_ids:
-                        result['expVar'] = exp_ver_ids[0].google_index
-                    else:
-                        result['expVar'] = 0
-        return result
+    # @api.model
+    # def google_analytics_data(self, main_object):
+    #     #To get the ExpId and the VarId of the view if it is in a running experiment
+    #     result = {}
+    #     if main_object and main_object._name == 'ir.ui.view':
+    #         view = main_object
+    #         #search all the running experiments with the key of view
+    #         exp_ids = self.env['website_version.experiment'].search([('experiment_version_ids.version_id.view_ids.key', '=', view.key), ('state', '=', 'running'), ('experiment_version_ids.version_id.website_id', '=', self.env.context.get('website_id'))])
+    #         if exp_ids:
+    #             #No overlap between running experiments then we can take the first one
+    #             result['expId'] = exp_ids[0].google_id
+    #             version_id = self.env.context.get('version_id') or self.env.context['website_version_experiment'].get(exp_ids[0].google_id)
+    #             if version_id:
+    #                 exp_ver_ids = self.env['website_version.experiment.version'].search([('experiment_id', '=', exp_ids[0].id), ('version_id', '=', int(version_id))], limit=1)
+    #                 if exp_ver_ids:
+    #                     result['expVar'] = exp_ver_ids[0].google_index
+    #                 else:
+    #                     result['expVar'] = 0
+    #     return result
 
 
