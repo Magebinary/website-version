@@ -9,8 +9,8 @@ class ir_http(orm.AbstractModel):
 
     def _dispatch(self):
         x = super(ir_http, self)._dispatch()
-        # if request.website_enabled:
-        #     request.context['website_id'] = request.website.id
+        if request.website_enabled:
+            request.context['website_id'] = request.website.id
         if request.context.get('website_version_experiment'):
             data=json.dumps(request.context['website_version_experiment'], ensure_ascii=False)
             x.set_cookie('website_version_experiment', data)

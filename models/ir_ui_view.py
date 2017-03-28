@@ -15,6 +15,11 @@ class view(models.Model):
     }
 
 
+    # def unlink(self, cr, uid, ids, context=None):
+    #     res = super(view, self).unlink(cr, uid, ids, context=context)
+    #     self.clear_caches()
+    #     return res
+
     def filter_duplicate(self):
         """
         Filter current recordset only keeping the most suitable view per distinct key
@@ -49,16 +54,19 @@ class view(models.Model):
         if self.env.context is None:
             self.env.context = {}
         version_id = self.env.context.get('version_id')
-        print "write"
+        version_id2 = self.env
+        print "version_id={}".format(version_id)
+        print "self.env.context={}".format(self.env.context)
         #If you write on a shared view, your modifications will be seen on every website wich uses these view.
         #To dedicate a view for a specific website, you must create a version and publish these version.
-        if version_id and not self.env.context.get('write_on_view') and not 'active' in vals:
+        if version_id and not self.env.context.get('write_on_view') and not 'active' in vals and not self.env.context.get('uid'):
+            print "write on version {}".format(version_id)
             self.env.context = dict(self.env.context, write_on_view=True)
             version = self.env['website_version.version'].browse(version_id)
             website_id = version.website_id.id
             version_view_ids = self.env['ir.ui.view']
             for current in self:
-                print "version_id={}".format(version_id)
+                # print "version_id={}".format(version_id)
                 #check if current is in version
                 if current.version_id.id == version_id:
                     version_view_ids += current
@@ -67,10 +75,11 @@ class view(models.Model):
                     if new_v:
                         version_view_ids += new_v
                     else:
-                        copy_v = current.copy({'version_id': version_id, 'website_id': website_id})
+                        copy_v = current.copy({'version_id': version_id, 'website_id': website_id, 'seo_url': None})
                         version_view_ids += copy_v
             return super(view, version_view_ids).write(vals)
         else:
+            print "write on master"
             self.env.context = dict(self.env.context, write_on_view=True)
             return super(view, self).write(vals)
 
@@ -117,19 +126,6 @@ class view(models.Model):
         arch = etree.tostring(root, encoding='utf-8', xml_declaration=True)
         return arch
 
-    # #To take the right inheriting views
-    # @api.model
-    # def get_inheriting_views_arch(self, view_id, model):
-    #     arch = super(view, self).get_inheriting_views_arch(view_id, model)
-    #     vw = self.browse(view_id)
-    #     if not (self.env.context and self.env.context.get('website_id') and vw.type == 'qweb'):
-    #         return arch
-
-    #     # keep the most suited view when several view with same key are available
-    #     chosen_view_ids = self.browse(view_id for _, view_id in arch).filter_duplicate().ids
-
-    #     return [x for x in arch if x[1] in chosen_view_ids]
-
     #To active or desactive the right views according to the key
     def toggle(self, cr, uid, ids, context=None):
         """ Switches between enabled and disabled statuses
@@ -140,15 +136,27 @@ class view(models.Model):
                 v.write({'active': not v.active})
 
     @api.model
+    # def translate_qweb(self, cr, uid, id_, arch, lang, context):
     def translate_qweb(self, id_, arch, lang):
         website_view = self.browse(id_)
-        # print "website_view.xml_id={}".format(website_view.xml_id)
+        # print "website_view={}".format(website_view)
+        # if hasattr(website_view, 'seo_url'):
+            # print "website_view.seo_url={}".format(website_view.seo_url)
         # print "website_view.key={}".format(website_view.key)
         # print "website_view.write={}".format((website_view.type == 'qweb') and (website_view.xml_id) and (website_view.key == False))
-        # if (website_view.type == 'qweb') and (website_view.xml_id) and (website_view.key == False):
-        #     flag = self.pool.get('res.users')
-        #     website_view.write({'key': website_view.xml_id})
-        #     print "website_view.key={}".format(website_view.key)
+        if (website_view.type == 'qweb') and (website_view.xml_id) and (website_view.key == False):
+            user = self.env['res.users'].browse(self.env.uid)
+            # print "user={}".format(user)
+            if user.has_group('base.group_website_designer'):
+                # website_view.write({'key': website_view.xml_id, 'seo_url': False})
+                website_view.key = website_view.xml_id
+            # else:
+            #     print 'This user is not a salesman'
+            # flaggroupdi= flag.browse([id_])['groups_id']
+            # print "flaggroupdi={}".format(flag.browse([id_])['groups_id'])
+            # website_view.write({'key': website_view.xml_id})
+            # website_view.key = website_view.xml_id
+            # print "website_view.key={}".format(website_view.key)
         if not website_view.key:
             return super(view, self).translate_qweb(id_, arch, lang)
         views = self.search([('key', '=', website_view.key), '|',
@@ -195,10 +203,3 @@ class view(models.Model):
             if element['res_id'] in view_list.ids:
                 element['res_id'] = xml_id
         return element_list
-
-    def render(self, cr, uid, id_or_xml_id, values=values, engine=engine, context=context):
-        website_view = self.browse(id_)
-        if (website_view.type == 'qweb') and (website_view.xml_id) and (website_view.key == False):
-            website_view.write({'key': website_view.xml_id})
-            print "website_view.key={}".format(website_view.key)
-        return super(view, self).render(cr, uid, id_or_xml_id, values=values, engine=engine, context=context)

@@ -22,7 +22,8 @@
             });
 
             this.$el.find('#version-menu-button').click(function() {
-                var view_id = parseInt($('html').attr('data-main-object').match(/ir\.ui\.view\((\d+),/)[1]);
+                var view_id = parseInt($('html').attr('data-view-xmlid'));
+                // var view_id = parseInt($('html').attr('data-main-object').match(/ir\.ui\.view\((\d+),/)[1]);
                 openerp.jsonRpc( '/website_version/all_versions', 'call', {'view_id': view_id}).then(function (result) {
                     self.$el.find(".o_version_choice").remove();
                     self.$el.find(".first_divider").before(QWeb.render("all_versions", {versions:result}));
@@ -41,7 +42,7 @@
         
         duplicate_version: function(event) {
             var version_id = $('html').data('version_id');
-            var wizardA = $(openerp.qweb.render("website_version.new_version",{'default_name': moment().format('L')}));
+            var wizardA = $(openerp.qweb.render("website_version.new_version",{'default_name': moment().format('LLL')}));
             wizardA.appendTo($('body')).modal({"keyboard" :true});
             wizardA.on('click','.o_create', function(){
                 wizardA.find('.o_message').remove();
@@ -57,7 +58,7 @@
                                                                                        dialogue:_.str.sprintf("If you edit this page or others, all changes will be recorded in the version. It will not be visible by visitors until you publish the version.")}));
                         wizard.appendTo($('body')).modal({"keyboard" :true});
                         wizard.on('click','.o_confirm', function(){
-                            window.location.href = '\?enable_editor';
+                            window.location.href = '';
                         });
                         wizard.on('hidden.bs.modal', function () {$(this).remove();});
                     }).fail(function(){
@@ -172,6 +173,7 @@
         create_experiment: function() {
             var self = this;
             var view_id = parseInt($('html').attr('data-view-xmlid'));
+            // var view_id = parseInt((/ir.ui.view\((\w+),.*\)/g).exec($('html').attr('data-main-object'))[1]);
             openerp.jsonRpc( '/website_version/all_versions_all_goals', 'call', { 'view_id': view_id }).then(function (result) {
                 var wizardA = $(openerp.qweb.render("website_version.create_experiment",{versions:result.tab_version, goals:result.tab_goal, config:result.check_conf}));
                 wizardA.appendTo($('body')).modal({"keyboard" :true});

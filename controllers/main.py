@@ -56,7 +56,7 @@ class Versioning_Controller(Website):
         website_id = request.website.id
         # print "website_id={}".format(website_id)
         # versions = Version.search([('website_id', '=', website_id), ('view_ids.key', '=', view.key)])
-        versions = Version.search([('website_id', '=', website_id)])
+        versions = Version.search([('website_id', '=', website_id), '|', ('view_ids.key', '=', view.key), ('view_ids.key', '=', 'website.footer_default')])
         # print "versions={}".format(versions)
         context = request.context
         # print "context={}".format(context)
@@ -85,18 +85,18 @@ class Versioning_Controller(Website):
     @http.route('/website_version/publish_version', type='json', auth="user", website=True)
     def publish_version(self, version_id, save_master, copy_master_name):
         request.session['version_id'] = 0
-
         print "publish start"
+        print "version_id={}".format(version_id)
         print "request={}".format(request.env['website_version.version'].browse(version_id))
         return request.env['website_version.version'].browse(version_id).publish_version(save_master, copy_master_name)
 
     @http.route('/website_version/diff_version', type='json', auth="user", website=True)
     def diff_version(self, version_id):
-        mod_version = request.env['website_version.version']
-        version = mod_version.browse(version_id)
+        # mod_version = request.env['website_version.version']
+        # version = mod_version.browse(version_id)
         name_list = []
-        for view in version.view_ids:
-            name_list.append({'name': view.name, 'url': '/page/' + view.name.replace(' ', '').lower()})
+        # for view in version.view_ids:
+        #     name_list.append({'name': view.name, 'url': '/page/' + view.name.replace(' ', '').lower()})
         return name_list
 
     @http.route('/website_version/google_access', type='json', auth="user")

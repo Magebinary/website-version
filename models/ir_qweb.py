@@ -20,8 +20,9 @@ class QWeb(models.AbstractModel):
             context = {}
         # print "context={}".format(context)
         website_id = context.get('website_id')
-        # print "website_id={}".format(website_id)
-        # id_or_xml_ids = {}
+        print "website_id={}".format(website_id)
+        print "id_or_xml_id={}".format(id_or_xml_id)
+        id_or_xml_ids = {}
         if website_id:
             if 'experiment_id' in context:
                 #Is there a version which have the view.key == id_or_xml_id and which is in a running experiment?
@@ -38,8 +39,8 @@ class QWeb(models.AbstractModel):
 
             if 'version_id' in context:
                 version_id = context.get('version_id')
-                print "version_id={}".format(version_id)
-                print "id_or_xml_id={}".format(id_or_xml_id)
+                # print "version_id={}".format(version_id)
+                # print "id_or_xml_id={}".format(id_or_xml_id)
                 # print "website_id={}".format(website_id)
                 if version_id:
                     id_or_xml_ids = self.pool["ir.ui.view"].search(cr, uid, [('key', '=', id_or_xml_id), '|', ('version_id', '=', False), ('version_id', '=', version_id), '|', ('website_id', '=', website_id), ('website_id', '=', False)], order='website_id, version_id', limit=1, context=context)
@@ -55,6 +56,7 @@ class QWeb(models.AbstractModel):
                 # print "id_or_xml_id={}".format(id_or_xml_id)
                 id_or_xml_id = id_or_xml_ids[0]
                 print "id_or_xml_id={}".format(id_or_xml_id)
+        #print "id_or_xml_id={}".format(id_or_xml_id)
         return super(QWeb, self).render(cr, uid, id_or_xml_id, qwebcontext, loader=loader, context=context)
     # def render(self, cr, uid, id_or_xml_id, qwebcontext=None, loader=None, context=None):
     #     if context is None:

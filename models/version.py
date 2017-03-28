@@ -41,13 +41,12 @@ class version(models.Model):
         del_l = self.env['ir.ui.view']
         copy_l = self.env['ir.ui.view']
         ir_ui_view = self.env['ir.ui.view']
-        print "save_master={}".format(save_master)
-        print "copy_master_name={}".format(copy_master_name)
+        # print "save_master={}".format(save_master)
+        # print "copy_master_name={}".format(copy_master_name)
         for view in self.view_ids:
-            print "view={}".format(view)
-            master_id = ir_ui_view.search([('key', '=', view.key), ('version_id', '=', False), ('website_id', '=', view.website_id.id)])
+            # print "view={}".format(view)
+            master_id = ir_ui_view.search([('key', '=', view.key), ('version_id', '=', False), ('website_id', '=', view.website_id.id)])[1:]
             print "master_id={}".format(master_id)
-            print "master_id.model_data_id={}".format(master_id.model_data_id)
             if master_id:
                 #Delete all the website views having a key which is in the version published
                 del_l += master_id
@@ -63,7 +62,7 @@ class version(models.Model):
             if save_master:
                 #To check if the name of the version to copy master already exists
                 check_id = self.search([('name', '=', copy_master_name), ('website_id', '=', self.website_id.id)])
-                print "check_id={}".format(check_id)
+                # print "check_id={}".format(check_id)
                 #If it already exists, we delete the old to make the new
                 if check_id:
                     check_id.unlink()
@@ -73,16 +72,22 @@ class version(models.Model):
         #All the views in the version published are copied without version_id
         for view in self.view_ids:
             print "view={}".format(view)
-            # print "record_id={}".format(record_id)
-            print "view.xml_id={}".format(view.xml_id)
-            view.copy({'version_id': None})
-            master_id2 = ir_ui_view.search([('key', '=', view.key), ('version_id', '=', False), ('website_id', '=', view.website_id.id)])
-            print "view.xml_id={}".format(view)
+            print "self.id={}".format(self.id)
+            print "view.arch="
+            print view.arch
+            # xmlid = view.get_xml_id
+            # print "view.xml_id={}".format(xmlid)
+            the_master_id = ir_ui_view.search([('key', '=', view.key), ('version_id', '=', False), ('website_id', '=', view.website_id.id)])[0]
+            print "the_master_id={}".format(the_master_id)
+            the_master_id.write({'arch' : view.arch})
+            # the_master_id.arch =  view.arch
+            print "the_master_id.arch="
+            print the_master_id.arch
         return self.name
 
     #To make a version of a version
     @api.one
     def copy_version(self, new_version_id):
         for view in self.view_ids:
-            view.copy({'version_id': new_version_id})
+            view.copy({'version_id': new_version_id, 'seo_url': None })
 
