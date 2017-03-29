@@ -11,16 +11,16 @@ class ir_http(orm.AbstractModel):
         x = super(ir_http, self)._dispatch()
         if request.website_enabled:
             request.context['website_id'] = request.website.id
-        if request.context.get('website_version_experiment'):
-            data=json.dumps(request.context['website_version_experiment'], ensure_ascii=False)
-            x.set_cookie('website_version_experiment', data)
+        # if request.context.get('website_version_experiment'):
+        #     data=json.dumps(request.context['website_version_experiment'], ensure_ascii=False)
+        #     x.set_cookie('website_version_experiment', data)
         return x
 
-    def get_page_key(self):
-        key = super(ir_http, self).get_page_key()
-        seq_ver = [int(ver) for ver in request.context.get('website_version_experiment', {}).values()]
-        key += (str(sorted(seq_ver)),)
-        return key
+    # def get_page_key(self):
+    #     key = super(ir_http, self).get_page_key()
+    #     seq_ver = [int(ver) for ver in request.context.get('website_version_experiment', {}).values()]
+    #     key += (str(sorted(seq_ver)),)
+    #     return key
 
     # def _dispatch(self):
     #     first_pass = not hasattr(request, 'website')

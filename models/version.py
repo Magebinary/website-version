@@ -20,16 +20,16 @@ class version(models.Model):
         ('name_uniq', 'unique(name, website_id)', _('You cannot have multiple versions with the same name in the same domain!')),
     ]
 
-    @api.multi
-    def unlink(self):
-        for id in self.ids:
-            result = self.env['website_version.experiment'].search(['|', ('state', '=', 'running'), ('state', '=', 'paused'), ('experiment_version_ids.version_id', '=', id)])
-            if result:
-                raise Warning(_("You cannot delete a version which is in a running or paused experiment."))
-        #To avoid problem when we delete versions in Backend
-        if request:
-            request.session['version_id'] = 0
-        return super(version, self).unlink()
+    # @api.multi
+    # def unlink(self):
+    #     for id in self.ids:
+    #         result = self.env['website_version.experiment'].search(['|', ('state', '=', 'running'), ('state', '=', 'paused'), ('experiment_version_ids.version_id', '=', id)])
+    #         if result:
+    #             raise Warning(_("You cannot delete a version which is in a running or paused experiment."))
+    #     #To avoid problem when we delete versions in Backend
+    #     if request:
+    #         request.session['version_id'] = 0
+    #     return super(version, self).unlink()
 
     @api.multi
     def action_publish(self):
@@ -55,8 +55,8 @@ class version(models.Model):
                 #Views that have no website_id, must be copied because they can be shared with another website
                 master_id = ir_ui_view.search([('key', '=', view.key), ('version_id', '=', False), ('website_id', '=', False)])
                 copy_l += master_id
-        print "del_l={}".format(del_l)
-        print "copy_l={}".format(copy_l)
+        # print "del_l={}".format(del_l)
+        # print "copy_l={}".format(copy_l)
 
         if copy_l:
             if save_master:
@@ -71,18 +71,18 @@ class version(models.Model):
             del_l.unlink()
         #All the views in the version published are copied without version_id
         for view in self.view_ids:
-            print "view={}".format(view)
-            print "self.id={}".format(self.id)
-            print "view.arch="
-            print view.arch
+            # print "view={}".format(view)
+            # print "self.id={}".format(self.id)
+            # print "view.arch="
+            # print view.arch
             # xmlid = view.get_xml_id
             # print "view.xml_id={}".format(xmlid)
             the_master_id = ir_ui_view.search([('key', '=', view.key), ('version_id', '=', False), ('website_id', '=', view.website_id.id)])[0]
-            print "the_master_id={}".format(the_master_id)
+            # print "the_master_id={}".format(the_master_id)
             the_master_id.write({'arch' : view.arch})
             # the_master_id.arch =  view.arch
-            print "the_master_id.arch="
-            print the_master_id.arch
+            # print "the_master_id.arch="
+            # print the_master_id.arch
         return self.name
 
     #To make a version of a version

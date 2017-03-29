@@ -27,8 +27,8 @@
                                 <li><a href="#" data-action="publish_version">Publish Version</a></li>
                                 <li><a href="#" data-action="diff_version" groups="base.group_no_one">List Modified Pages</a></li>
                             </t>
-                            <li class="divider o_publish_version"> </li>
-                            <li class="create_experiment"><a href="#" data-action="create_experiment">Launch A/B tests</a></li>
+                            <!-- <li class="divider o_publish_version"> </li> -->
+                            <!-- <li class="create_experiment"><a href="#" data-action="create_experiment">Launch A/B tests</a></li> -->
                         </ul>
                     </li>
             </xpath> 
@@ -44,12 +44,12 @@
             </xpath>
         </template>
 
-        <template id="assets_backend" name="stock assets" inherit_id="web.assets_backend">
+<!--         <template id="assets_backend" name="stock assets" inherit_id="web.assets_backend">
             <xpath expr="." position="inside">
                 <link rel="stylesheet" href="/website_version/static/src/css/google_analytics.css"/>
                 <script type="text/javascript" src="/website_version/static/src/js/widget.js"></script>
             </xpath>
-        </template>
+        </template> -->
     </data>
 </openerp>
 
