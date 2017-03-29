@@ -2,16 +2,16 @@
 <openerp>
     <data>
 
-<!--         <record id="action_experiment" model="ir.actions.act_window">
+        <record id="action_experiment" model="ir.actions.act_window">
             <field name="name">Experiments</field>
             <field name="res_model">website_version.experiment</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">kanban,tree,form</field>
             <field name="context">{}</field>
-        </record> -->
+        </record>
         
-<!--         <record model="ir.ui.view" id="view_experiment_kanban">
+        <record model="ir.ui.view" id="view_experiment_kanban">
             <field name="name">Experiment Kanban</field>
             <field name="model">website_version.experiment</field>
             <field name="arch" type="xml">
@@ -26,21 +26,21 @@
                         <field name="state"/>
                         <t t-name="kanban-box">
                           <div t-attf-class="oe_kanban_color_#{kanban_getcolor(record.color.raw_value)} oe_kanban_global_click_edit oe_semantic_html_override oe_kanban_card">
-                            <div class="oe_dropdown_kanban"> -->
+                            <div class="oe_dropdown_kanban">
 
                               <!-- dropdown menu -->
-<!--                               <span class="oe_dropdown_toggle">
+                              <span class="oe_dropdown_toggle">
                                 <span class="oe_e">í</span>
                                 <ul class="oe_dropdown_menu">
                                   <li><a type="delete">Delete</a></li>
                                   <li><ul class="oe_kanban_colorpicker" data-field="color"/></li>
                                 </ul>
                               </span>
-                            </div> -->
+                            </div>
                             <!-- kanban note -->
-                            <!-- <div class="oe_kanban_content"> -->
+                            <div class="oe_kanban_content">
                               <!-- title -->
-<!--                               <field name="name"/> on <field name="website_id"/>
+                              <field name="name"/> on <field name="website_id"/>
                             </div>
                             <div class="oe_clear"></div>
                             <div> <field name="version_number"/> versions </div>
@@ -56,15 +56,15 @@
                     </templates>
                 </kanban>
             </field>
-        </record> -->
+        </record>
 
-<!--         <record id="action_analytic" model="ir.actions.act_url">
+        <record id="action_analytic" model="ir.actions.act_url">
             <field name="name">Google analytics</field>
             <field name="url">https://www.google.com/analytics/web/?authuser=0#report/siteopt-experiments/</field>
             <field name="target">self</field>
-        </record> -->
+        </record>
         
-<!--         <record model="ir.ui.view" id="experiment_form_view">
+        <record model="ir.ui.view" id="experiment_form_view">
             <field name="name">experiment.form</field>
             <field name="model">website_version.experiment</field> 
             <field name="arch" type="xml">
@@ -106,9 +106,9 @@
                     </sheet>
                 </form>
             </field>
-        </record> -->
+        </record>
         
-<!--         <record model="ir.ui.view" id="experiment_tree_view">
+        <record model="ir.ui.view" id="experiment_tree_view">
             <field name="name">experiment.tree</field>
             <field name="model">website_version.experiment</field> 
             <field name="arch" type="xml">
@@ -134,7 +134,7 @@
                     </group>
                 </search>
             </field>
-        </record> -->
+        </record>
 
         <!-- <record id="action_experiment_search" model="ir.actions.act_window">
             <field name="name">Experiment search</field>
@@ -143,7 +143,7 @@
             <field name="context">{'search_default_my_exps':1}</field>
         </record> -->
 
-<!--         <record model="ir.ui.view" id="experiment_version_form_view">
+        <record model="ir.ui.view" id="experiment_version_form_view">
             <field name="name">experiment_version.form</field>
             <field name="model">website_version.experiment.version</field> 
             <field name="arch" type="xml">
@@ -156,7 +156,7 @@
                     </notebook>
                 </form>
             </field>
-        </record> -->
+        </record>
             
         <record id="action_version" model="ir.actions.act_window">
             <field name="name">Versions</field>
@@ -172,9 +172,9 @@
             <field name="arch" type="xml">
                 <form string="version Form">
                     <sheet string="Snap">
-                        <!-- <group>
+                        <group>
                             <button icon="fa-pencil" name="action_publish" string="Publish" type="object" class="oe_stat_button pull-right"/>
-                        </group> -->
+                        </group>
                         <div class="oe_title">
                             <label for="name" class="oe_edit_only"/>
                             <h1>
@@ -217,7 +217,7 @@
             </field>
         </record>
 
-<!--         <record id="action_website_view" model="ir.actions.act_window">
+        <record id="action_website_view" model="ir.actions.act_window">
             <field name="name">Website Domain</field>
             <field name="res_model">website</field>
             <field name="view_type">form</field>
@@ -226,15 +226,15 @@
 
         <menuitem name="Website" id="website_menu" sequence="10" parent="base.marketing_menu"/>
         <menuitem action="action_website_view" id="menu_website_view" parent="website_menu"/>
-        <menuitem action="action_version" id="menu_action_version" parent="website_menu" groups="base.group_no_one"/> -->
-        <!-- <menuitem action="action_experiment" id="menu_action_experiment" parent="website_menu"/> -->
+        <menuitem action="action_version" id="menu_action_version" parent="website_menu" groups="base.group_no_one"/>
+        <menuitem action="action_experiment" id="menu_action_experiment" parent="website_menu"/>
 
-<!--         <record id="google_analytics_configuration" model="ir.actions.act_window">
+        <record id="google_analytics_configuration" model="ir.actions.act_window">
             <field name="name">Google Analytics Configuration</field>
             <field name="res_model">website</field>
             <field name="view_mode">form</field>
             <field name="target">inline</field>
-        </record> -->
+        </record>
 
     </data>
 </openerp>

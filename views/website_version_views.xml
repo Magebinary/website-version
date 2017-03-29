@@ -10,7 +10,7 @@
                 <!-- find field name, and insert field name before it -->
                 <field name="name" position="replace">
                 </field>
-<!--                 <field name="google_analytics_key" position="before">
+                <field name="google_analytics_key" position="before">
                     <field name="tuto_google_analytics"/>                           
                     <div colspan="4"> 
                         <div attrs="{'invisible':[('tuto_google_analytics','=',False)]}">
@@ -56,7 +56,7 @@
                 <field name="google_analytics_key" position="after">
                         <field name="google_analytics_view_id" placeholder="7654321"/>
                         <field name="google_management_authorization" widget="rtoken"/>
-                </field> -->
+                </field>
                 <field name="company_id" position="after">
                     <field name="name" class="oe_inline"/>
                     <field name="company_id"/>
@@ -89,7 +89,7 @@
 
                 <group position="before">
                     <button icon="fa-pencil" name="action_publish" string="Publish" type="object" class="oe_stat_button pull-right" 
-                        attrs="{'invisible': ['|','|',('type', '!=', 'qweb'), ('version_id', '=', False)]}" />
+                        attrs="{'invisible': ['|','|',('type', '!=', 'qweb'),('website_id', '=',False), ('version_id', '=', False)]}" />
                 </group>
 
             </field>

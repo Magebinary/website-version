@@ -23,18 +23,17 @@
 
             this.$el.find('#version-menu-button').click(function() {
                 var view_id = parseInt($('html').attr('data-view-xmlid'));
-                // var view_id = parseInt($('html').attr('data-main-object').match(/ir\.ui\.view\((\d+),/)[1]);
                 openerp.jsonRpc( '/website_version/all_versions', 'call', {'view_id': view_id}).then(function (result) {
                     self.$el.find(".o_version_choice").remove();
                     self.$el.find(".first_divider").before(QWeb.render("all_versions", {versions:result}));
 
                 });
-                // openerp.jsonRpc( '/website_version/has_experiments', 'call', {'view_id': view_id}).then(function (result) {
-                //     self.$el.find(".o_experiment").remove();
-                //     if(result){
-                //         self.$el.find(".create_experiment").after(QWeb.render("experiment_menu"));
-                //     }
-                // });
+                openerp.jsonRpc( '/website_version/has_experiments', 'call', {'view_id': view_id}).then(function (result) {
+                    self.$el.find(".o_experiment").remove();
+                    if(result){
+                        self.$el.find(".create_experiment").after(QWeb.render("experiment_menu"));
+                    }
+                });
                 
             });
             return this._super();
@@ -42,7 +41,7 @@
         
         duplicate_version: function(event) {
             var version_id = $('html').data('version_id');
-            var wizardA = $(openerp.qweb.render("website_version.new_version",{'default_name': moment().format('LLL')}));
+            var wizardA = $(openerp.qweb.render("website_version.new_version",{'default_name': moment().format('L')}));
             wizardA.appendTo($('body')).modal({"keyboard" :true});
             wizardA.on('click','.o_create', function(){
                 wizardA.find('.o_message').remove();
@@ -58,7 +57,7 @@
                                                                                        dialogue:_.str.sprintf("If you edit this page or others, all changes will be recorded in the version. It will not be visible by visitors until you publish the version.")}));
                         wizard.appendTo($('body')).modal({"keyboard" :true});
                         wizard.on('click','.o_confirm', function(){
-                            window.location.href = '';
+                            window.location.href = '\?enable_editor';
                         });
                         wizard.on('hidden.bs.modal', function () {$(this).remove();});
                     }).fail(function(){
@@ -85,13 +84,13 @@
             console.log(event);
             var version_id = parseInt($(event.currentTarget).parent().data("version_id"));
             var name = $(event.currentTarget).parent().children(':last-child').text();
-            // openerp.jsonRpc( '/website_version/check_version', 'call', { 'version_id':version_id }).then(function (result) {
-                    // if (result){
-                    //     var wizard = $(openerp.qweb.render("website_version.message",{message:_.str.sprintf("You cannot delete the %s version because it is in a running or paused experiment", name)}));
-                    //     wizard.appendTo($('body')).modal({"keyboard" :true});
-                    //     wizard.on('hidden.bs.modal', function () {$(this).remove();});
-                    // }
-                    // else{
+            openerp.jsonRpc( '/website_version/check_version', 'call', { 'version_id':version_id }).then(function (result) {
+                    if (result){
+                        var wizard = $(openerp.qweb.render("website_version.message",{message:_.str.sprintf("You cannot delete the %s version because it is in a running or paused experiment", name)}));
+                        wizard.appendTo($('body')).modal({"keyboard" :true});
+                        wizard.on('hidden.bs.modal', function () {$(this).remove();});
+                    }
+                    else{
                         var wizardA = $(openerp.qweb.render("website_version.delete_message",{message:_.str.sprintf("Are you sure you want to delete the %s version ?", name)}));
                         wizardA.appendTo($('body')).modal({"keyboard" :true});
                         wizardA.on('click','.o_confirm', function(){
@@ -105,8 +104,8 @@
                             });
                         });
                         wizardA.on('hidden.bs.modal', function () {$(this).remove();});
-                    // }
-                // });
+                    }
+                });
         },
 
         publish_version: function(event) {
@@ -165,7 +164,7 @@
             });
         },
 
-        /*google_analytics: function(event){
+        google_analytics: function(event){
             window.location.href = 'https://www.google.com/analytics/web';
 
         },
@@ -173,7 +172,6 @@
         create_experiment: function() {
             var self = this;
             var view_id = parseInt($('html').attr('data-view-xmlid'));
-            // var view_id = parseInt((/ir.ui.view\((\w+),.*\)/g).exec($('html').attr('data-main-object'))[1]);
             openerp.jsonRpc( '/website_version/all_versions_all_goals', 'call', { 'view_id': view_id }).then(function (result) {
                 var wizardA = $(openerp.qweb.render("website_version.create_experiment",{versions:result.tab_version, goals:result.tab_goal, config:result.check_conf}));
                 wizardA.appendTo($('body')).modal({"keyboard" :true});
@@ -280,7 +278,7 @@
 
         statistics: function() {
             window.open('https://www.google.com/analytics/web/?authuser=0#report/siteopt-experiments/','_blank');
-        }*/
+        }
         
     });
 

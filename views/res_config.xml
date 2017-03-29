@@ -13,7 +13,7 @@
             </field>
         </record>
 
-<!--         <record id="view_analytics_config_settings" model="ir.ui.view">
+        <record id="view_analytics_config_settings" model="ir.ui.view">
             <field name="name">Analytics_settings</field>
             <field name="model">base.config.settings</field>
             <field name="inherit_id" ref="base_setup.view_general_configuration"/>
@@ -98,14 +98,14 @@
                     </group>
                 </group>
             </field>
-        </record> -->
+        </record>
 
-<!--         <record id="action_config_settings_google_management" model="ir.actions.act_window">
+        <record id="action_config_settings_google_management" model="ir.actions.act_window">
             <field name="name">API Management Configuration</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">base.config.settings</field>
             <field name="view_mode">form</field>
             <field name="target">inline</field>
-        </record> -->
+        </record>
     </data>
 </openerp>
