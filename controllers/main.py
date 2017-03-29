@@ -56,7 +56,7 @@ class Versioning_Controller(Website):
         website_id = request.website.id
         # print "website_id={}".format(website_id)
         # versions = Version.search([('website_id', '=', website_id), ('view_ids.key', '=', view.key)])
-        versions = Version.search([('website_id', '=', website_id), '|', ('view_ids.key', '=', view.key), ('view_ids.key', '=', 'website.footer_default')])
+        versions = Version.search([('website_id', '=', website_id)])
         # print "versions={}".format(versions)
         context = request.context
         # print "context={}".format(context)

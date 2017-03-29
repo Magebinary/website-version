@@ -19,8 +19,13 @@ class QWeb(models.AbstractModel):
         if context is None:
             context = {}
         # print "context={}".format(context)
+        print "len(context)={}".format(len(context))
+        if len(context) == 0:
+            context = qwebcontext.context
+            context['version_id'] = qwebcontext['version_id']
         website_id = context.get('website_id')
         print "website_id={}".format(website_id)
+        print "context={}".format(context)
         print "id_or_xml_id={}".format(id_or_xml_id)
         id_or_xml_ids = {}
         if website_id:
