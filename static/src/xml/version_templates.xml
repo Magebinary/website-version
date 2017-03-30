@@ -33,24 +33,6 @@
         </t>
     </t>
 
-    <t t-name="all_options">    
-        <li class="o_second_choice">
-            <a href="#" id="save_and_publish" data-action="save_and_publish" 
-                class="btn btn-link btn-xs o_version"><t t-esc="version"></t></a>
-        </li>
-    </t>
-
-    <t t-name="experiment_menu">
-        <li class="o_experiment"><a href="#" data-action="manage_experiment">Manage A/B tests</a></li>
-        <li class="o_experiment"><a href="#" data-action="statistics">Statistics</a></li>
-    </t>
-
-    <t t-name="website_version.GoogleAccess">
-        <div id="CheckGoogleAccess" class="odoo_google_token" >
-                <button class="GoogleAccess"> Authorize google </button>
-        </div>
-    </t>
-
 
     <t t-name="website_version.message">
         <div class="modal fade">
@@ -172,22 +154,6 @@
                 <t t-if="list.length == 0"> 
                     <p>There is no difference with Master</p>
                 </t>
-<!--                 <form id="productForm" class="form-horizontal" role="form">
-
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="checked"/>
-                            Publish version
-                        </label>
-                    </div>              
-                    <div class="radio">
-                        <label>
-                          <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" class="o_check"/>
-                          Publish and copy the current version
-                          <input type="text" class="form-control o_name o_required_field" style="display: none;"/>
-                        </label>
-                    </div>
-                </form> -->
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-primary o_confirm">Publish</button>

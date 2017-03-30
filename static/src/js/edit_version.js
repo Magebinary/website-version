@@ -12,7 +12,7 @@
             var self = this;
             this.$el.on('click', '#save_as_new_version', function() {
                 
-                var wizardA = $(openerp.qweb.render("website_version.new_version",{'default_name': moment().format('LLL')}));
+                var wizardA = $(openerp.qweb.render("website_version.new_version",{'default_name': moment().format('l k:m')}));
                 wizardA.appendTo($('body')).modal({"keyboard" :true});
                 wizardA.on('click','.o_create', function(){
                     wizardA.find('.o_message').remove();

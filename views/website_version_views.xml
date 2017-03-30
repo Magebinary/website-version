@@ -7,56 +7,8 @@
             <field name="inherit_id" ref="website.view_website_form"/>
             <field name="priority">1</field>
             <field name="arch" type="xml">
-                <!-- find field name, and insert field name before it -->
                 <field name="name" position="replace">
                 </field>
-<!--                 <field name="google_analytics_key" position="before">
-                    <field name="tuto_google_analytics"/>                           
-                    <div colspan="4"> 
-                        <div attrs="{'invisible':[('tuto_google_analytics','=',False)]}">
-                            <br/><h2>How to get the Google Analytics Key and the View ID</h2>
-                            <ul> 
-                                <li> Go to <a href='https://www.google.com/analytics/' target='_blank'>https://www.google.com/analytics/</a>
-                                and connect you.
-                                    <br/><br/><img src='/website_version/static/src/img/GA/GA_login.png' class='analytics_img_tuto'/> 
-                                </li>
-                                <li> 
-                                    Click on <b>"Admin"</b>.
-                                    <br/><br/><img src='/website_version/static/src/img/GA/GA_admin.png' class='analytics_img_tuto'/>    
-                                </li>
-                                <li> 
-                                    Click on <b>"Tracking Code"</b>.
-                                    <br/><br/><img src='/website_version/static/src/img/GA/GA_tracking_code.png' class='analytics_img_tuto'/>   
-                                </li>
-                                <li> 
-                                    Copy the <b>"Tracking ID"</b> and paste it in the field Google Analytics key.
-                                    <br/><br/><img src='/website_version/static/src/img/GA/GA_tracking_id.png' class='analytics_img_tuto'/>   
-                                </li>
-                                <li> 
-                                    Click on <b>"Admin"</b> and click on <b>"View Settings"</b>.
-                                    <br/><br/><img src='/website_version/static/src/img/GA/GA_view_settings.png' class='analytics_img_tuto'/>  
-                                </li>
-                                <li> 
-                                    Copy the <b>"View ID"</b> and paste it in the field View ID.
-                                    <br/><br/><img src='/website_version/static/src/img/GA/GA_view_id.png' class='analytics_img_tuto'/>  
-                                </li>
-                                <li> 
-                                    Click on Save.
-                                    <br/><br/><img src='/website_version/static/src/img/GA/GA_save.png' class='analytics_img_tuto' />  
-                                </li>
-                                <li> 
-                                    Click on Authorize google.
-                                    <br/><br/><img src='/website_version/static/src/img/GA/GA_authorize.png' class='analytics_img_tuto' />  
-                                </li>
-                                <a href="#" class="oe_link">Return at Top</a>                                             
-                            </ul>                                
-                        </div>
-                    </div>
-                </field>
-                <field name="google_analytics_key" position="after">
-                        <field name="google_analytics_view_id" placeholder="7654321"/>
-                        <field name="google_management_authorization" widget="rtoken"/>
-                </field> -->
                 <field name="company_id" position="after">
                     <field name="name" class="oe_inline"/>
                     <field name="company_id"/>
@@ -83,15 +35,9 @@
             <field name="inherit_id" ref="base.view_view_form"/>
             <field name="arch" type="xml">
 
-                 <field name="name" position="after">
-                    <field name="version_id"/> 
-                </field>
-
-                <group position="before">
-                    <button icon="fa-pencil" name="action_publish" string="Publish" type="object" class="oe_stat_button pull-right" 
-                        attrs="{'invisible': ['|','|',('type', '!=', 'qweb'), ('version_id', '=', False)]}" />
-                </group>
-
+            <field name="name" position="after">
+                <field name="version_id"/>
+            </field>
             </field>
         </record>
     </data>

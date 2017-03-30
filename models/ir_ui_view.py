@@ -10,63 +10,20 @@ class view(models.Model):
     version_id  = fields.Many2one('website_version.version', ondelete='cascade', string="Version")
     key = fields.Char(string='Key')
 
-    # _defaults = {
-    #     'website_id': 1,
-    # }
-
-
-    # def unlink(self, cr, uid, ids, context=None):
-    #     res = super(view, self).unlink(cr, uid, ids, context=context)
-    #     self.clear_caches()
-    #     return res
-
-    # def filter_duplicate(self):
-    #     """
-    #     Filter current recordset only keeping the most suitable view per distinct key
-    #     """
-    #     filtered = self.browse([])
-    #     for _, group in groupby(self, key=lambda r:r.key):
-    #         filtered += sorted(group, key=lambda r:r._sort_suitability_key())[0]
-    #     return filtered
-
-    # def _sort_suitability_key(self):
-    #     """
-    #     Key function to sort views by descending suitability
-
-    #     Suitability of a view is defined as follow:
-
-    #     * if the view and request version are matched,
-    #     * then fallback on previously defined suitability
-    #     """
-    #     context_website_id = self.env.context.get('website_id', 1)
-    #     website_id = self.website_id.id or 0
-    #     different_website = context_website_id != website_id
-
-    #     original_suitability = (different_website, website_id)
-
-    #     context_version_id = self.env.context.get('version_id', 0)
-    #     different_version = context_version_id != (self.version_id.id or 0)
-
-    #     return (different_version, original_suitability)
-
     @api.multi
     def write(self, vals):
         if self.env.context is None:
             self.env.context = {}
         version_id = self.env.context.get('version_id')
         version_id2 = self.env
-        # print "version_id={}".format(version_id)
-        # print "self.env.context={}".format(self.env.context)
         #If you write on a shared view, your modifications will be seen on every website wich uses these view.
         #To dedicate a view for a specific website, you must create a version and publish these version.
         if version_id and not self.env.context.get('write_on_view') and not 'active' in vals and not self.env.context.get('uid'):
-            # print "write on version {}".format(version_id)
             self.env.context = dict(self.env.context, write_on_view=True)
             version = self.env['website_version.version'].browse(version_id)
             website_id = version.website_id.id
             version_view_ids = self.env['ir.ui.view']
             for current in self:
-                # print "version_id={}".format(version_id)
                 #check if current is in version
                 if current.version_id.id == version_id:
                     version_view_ids += current
@@ -79,7 +36,6 @@ class view(models.Model):
                         version_view_ids += copy_v
             return super(view, version_view_ids).write(vals)
         else:
-            # print "write on master"
             self.env.context = dict(self.env.context, write_on_view=True)
             return super(view, self).write(vals)
 
@@ -136,27 +92,12 @@ class view(models.Model):
                 v.write({'active': not v.active})
 
     @api.model
-    # def translate_qweb(self, cr, uid, id_, arch, lang, context):
     def translate_qweb(self, id_, arch, lang):
         website_view = self.browse(id_)
-        # print "website_view={}".format(website_view)
-        # if hasattr(website_view, 'seo_url'):
-            # print "website_view.seo_url={}".format(website_view.seo_url)
-        # print "website_view.key={}".format(website_view.key)
-        # print "website_view.write={}".format((website_view.type == 'qweb') and (website_view.xml_id) and (website_view.key == False))
         if (website_view.type == 'qweb') and (website_view.xml_id) and (website_view.key == False):
             user = self.env['res.users'].browse(self.env.uid)
-            # print "user={}".format(user)
             if user.has_group('base.group_website_designer'):
-                # website_view.write({'key': website_view.xml_id, 'seo_url': False})
                 website_view.key = website_view.xml_id
-            # else:
-            #     print 'This user is not a salesman'
-            # flaggroupdi= flag.browse([id_])['groups_id']
-            # print "flaggroupdi={}".format(flag.browse([id_])['groups_id'])
-            # website_view.write({'key': website_view.xml_id})
-            # website_view.key = website_view.xml_id
-            # print "website_view.key={}".format(website_view.key)
         if not website_view.key:
             return super(view, self).translate_qweb(id_, arch, lang)
         views = self.search([('key', '=', website_view.key), '|',
