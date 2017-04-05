@@ -8,7 +8,7 @@ Allow to save all the versions of your website
 
 Put it in your local Apps folder
 
-## Feature
+## Features
 * Create version
 * Duplicate version
 * Delete version
